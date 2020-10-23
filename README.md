@@ -59,6 +59,8 @@ servlet 클래스에는
 
 -예제 unit01.AdditonServlet01.java
 
+
+
 #### JSP란?
 
 ###### Java Server Page의 줄임말로 자바로 서버 페이지를 작성하기 위한 언어
@@ -115,7 +117,9 @@ http://localhost:8181/movie 라는 것이 만약 영화예매 어플리케이션
 
 #   
 
-### Servelt을 알아보자
+### Servlet을 알아보자
+
+
 
 ##### 웹 어플리케이션 등록
 
@@ -230,6 +234,8 @@ unit05-paramServlet.java
 #### 서블릿에서 요청시 한글처리
 
 서블릿에서 한글을 처리하기 위해서는 별도의 처리를 해야함
+
+
 
 ##### -get방식으로 요청시
 
@@ -373,6 +379,8 @@ get방식과 post방식 구분없이 모든 요청에 대한 처리를 하는 �
 
 <% include file="URL" %>
 
+
+
 ##### 페이지 지시자
 
 jsp 페이지에 여러가지 정보를 나타내기 위해서 사용되는 JSP문법
@@ -427,17 +435,25 @@ session은 앵간해서는 사용하니까 default인 true로 냅두고
 
 ## JSP 내장객체-4장
 
+
+
 ##### 입출력 객체
 
 **request, response, out**
+
+
 
 ##### 서블릿 관련 객체
 
 **page , config**
 
+
+
 ##### 외부 환경정보 제공하는 객체
 
 **session, application, pageContext**
+
+
 
 **예외 관련 객체**
 
@@ -484,6 +500,8 @@ getSession()-세션객체를 구함
 getServerName()-서버의 이름을구함
 
 getProtocol()-사용중인 프로토콜을 알려줌
+
+
 
 **파라미터 요청 메소드**
 
