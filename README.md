@@ -24,7 +24,11 @@ Ctrl+shift+L -단축키 리스트
 
 shift+ALT+T -리펙토링 매뉴 띄우기
 
+Alt+shift+S-인텔리제이의 컨텍스트 메뉴
 
+게터 세터 쉽게생성
+
+Alt+shift+s => R=> Alt+A => Alt+ S => enter
 
 # jsp & Servlet 공부
 
@@ -32,12 +36,12 @@ shift+ALT+T -리펙토링 매뉴 띄우기
 
 **server+Applet의 합성어**
 
-javax.servlet.http 패키지에서 제공하는 httpServlet 클래스를 상속받아 구현해야함
+javax.servlet.http 패키지에서 제공하는 httpServlet 클래스를 상속받아 구현해야함.
 이러한 상속받아 만든 서브 클래스를 **서블릿 클래스**라고함
 
 
 
-servlet 클래스에는
+**servlet 클래스**에는
 
 **doGet, doPost**의 2개의 메소드가 있는데 하나는 get방식으로 받았을때 작동하는메소드, 하나는 post방식으로 호출받았을때 행동하는 메소드 이다.
 
@@ -355,6 +359,8 @@ get방식과 post방식 구분없이 모든 요청에 대한 처리를 하는 �
 
 <% %> - 스크립트릿-자바코드 기술
 
+-tip <% if(){    %>         <% } 형식으로 if문사이 저 중간에 자바스크립트나 액션태그 등을 넣으면 조건에 해당될 경우 기입한 작업을 실행하게 할 수 있다
+
 <%! %> - 변수나 메소드 선언 - 관례적으로 html 맨위-- <%@ page %> 아래
 
 <%= %> - 표현식- 결과를 문자열 형태로 출력
@@ -510,6 +516,354 @@ getParameter(String name)-지정한 이름의 파라미터를 구함-여러개�
 getParameterNames()-모든 파라미터의 이름을 구함
 
 getParameterValues(String name)-지정된 이름의 파라미터가 여러개 있으면 모든값을 String 배열로 넘겨줌
+
+
+
+##### response
+
+sendRedirect(String URL)-이 페이지로 강제이동-객체가 전송이 안됨-다만 피라미터를 손수 넣어서 강제 이동시키려면
+
+response.sendRedirect("04_main.jsp?name="+URLEncoder.encode("성윤정", "UTF-8"));처럼 URLEncoder.Encode메소드로 인코딩을해야함
+
+forward()-이동 데이터 전송포함, requestDispatcher 객체로 접근해야만 호출가능
+
+이 객체는 request객체의 getRequestDispatcher() 메소드로 호출가능
+
+데이터를 같이 전송하고 싶으면 
+
+setAttribute("속성이름", 속성값); 으로 전송가능 - 다만 String으로 전송시 리턴타입이 오브젝트임으로 cast 를 해야함
+
+
+
+#### application 내장객체
+
+하나의 웹 어플리케이션을 관리하고 웹 어플래케이션 안에서 자원을 공유-어플리케이션이란 web-study-01 같이 하나의 프로젝트를 말함
+
+application.setAttribute("name", "application man")
+
+처럼 속성을 지정하거나 값을 할당하면 이 어플리케이션안에있는 모든 jsp에서 끄집어서 쓸수잇음
+
+application 내장객체는 한 어플리케이션에서 딱 하나만 생성이됨
+
+
+
+**어플리케이션 객체 메소드**
+
+getServerInfo()-컨테이너 이름과 버전을 반환
+
+getContextPath()-웹 어플리케이션의 URL경로중 컨텍스트 패스명 반환
+
+getRealPath() JSP 의 실제경로를 반환
+
+getMimeType(filename)-지정된 파일의 MIME 타입반환
+
+log(message)-지정된 메세지의 로그저장
+
+
+
+
+
+#### 내장 객체의 영역
+
+4가지로 구분이됨-scope
+
+**page**-하나의 jsp페이지를 처리할때 사용되는영역
+
+- 브라우저의 요청이 들어오면 JSP페이지 실행
+
+- 이때 실행하게되는 JSP페이지의 범위가 하나의 page 영역
+-  브라우저 요청을 처리하는 JSP페이지는 요청에 대해 새로운 page영역을 가짐
+- 그리고 그에 해당하는 pageContext 내장객체를 할당받음-메모리에 로딩됨
+- 이 pageContext에 정보 저장시 해당페이지 내에서만 사용가능
+
+
+
+**request**-하나의 요청을 처리할때 사용되는 영역
+
+- 브라우저에서 오는 한번의 요청과 관련-URL을 입력하거나 페이지 링크 클릭할때 웹서버에 전송되는 요청이 하나의 request영역
+
+- 사용자가 페이지 요청시 요청한 페이지와 요청을 받은 페이지 사이에 request 내장객체에 정보를 저장가능
+- 브라우저가 결과를 받으면 그 요청과 관련된 request 내장객체는 사라짐
+- page 영역과 다른점은 하나의 요청을 처리하는데 사용되는 모든 jsp 페이지를 포함
+
+
+
+**session**-하나의 브라우저와 관련된 영역
+
+- 페이지가 이동되더라도 사용자의 정보를 잃지 않게 하기위해 서버에 저장하는 영역
+
+  
+
+**application**-하나의 웹 어플리케이션과 관련된 영역
+
+- 이 어플리케이션에 속한 모든 jsp페이지는 하나의 application 내장객체를 공유
+
+
+
+page<request<session<application순이며 포함하는관계
+
+
+
+**내장 객체의 메소드**
+
+setAttribute(name ,value)-이름에 값설정
+
+getAttribute(name)-이름에 해당하는 값을 얻음
+
+getAttributeNames()-현재 객체에 관련된 모든 속성의 이름을 뽑아냄
+
+removeAttribute(name)-매개변수의 이름에 설정된 값 제거
+
+
+
+## 액션 태그
+
+jsp를 이루고 있는 요소중 하나
+
+액션태그는 XML 문법을 따름
+
+
+
+종류
+
+**< jsp:forward >** -다른사이트를 이동할때 혹은 페이지의 흐름을 제어할때 사용
+
+서블릿상에서 다음의 코드와 동일한 동작을함
+
+RequestDispatcher dispatcher= getServletContext().getRequestDispatcher("url");
+
+dispatcher.forward(request, response);
+
+예제 파일 web-study-04- 08_red.jsp , 08_yellow.jsp
+
+
+
+**< jsp: include >**- 정적 혹은 동적인 자원을 현재페이지의 내용에 포함시키거나 페이지를 모듈화 할때 사용
+
+이전의 **<%@page include="file"%> 과의 차이점**: include 지시자는 지정된 페이지를 한페이지에 포함하는 기능을함-변수를 서로 공유해서 사용가능
+
+< jsp:include> 액션태그는 컴파일할때 합쳐지지않고 제어권이 지정한 페이지로 넘어갔다가 다시 되돌아옴.-서로 독립적으로 컴파일-서로 연락을 취하여 하나의 페이지 처럼 동작-변수 서로 공유불가
+
+
+
+
+
+
+
+**< jsp :param >** -forward, include, plugin 과 같이 사용되어 피라미터를 추가할때 사용
+
+이동하는 페이지에 정보를 추가하고 싶을때 사용-단독으로 사용불가 include나 forward태그의 내부에 기술하여 사용
+
+
+
+ex) < jsp:forward page="main.jsp">
+
+​	<jsp:param name = "username" value="kimbyungjun" />
+
+< /jsp:forward>
+
+
+
+**< jsp : usebean >** -빈을 생성하고 사용하기 위한 환경을 정의하는 액션태그
+
+**< jsp : setPorperty>** -액션은 빈에서 속성값을 할당
+
+**< jsp : getProperty>** -액션은 빈에서 속성값을 얻어올때 사용
+
+-앞에 띄어쓰기 되있는대 원랜 아니다
+
+
+
+## 쿠키와 세션
+
+### **쿠키**:
+
+##### -하드디스크에 저장되는 작은양의 정보로 웹페이지 간 통신지원
+
+쿠키 Cookie cookie=new Cookie("name","value"); 로 생성
+
+쿠키는 response.addCookie(cookie)로 추가가능
+
+또한 클라이언트에 있는 쿠키를 가져오려면
+
+Cookie[] cookies=request.getcookies(); 메소드로 배열형태로 전부 가져올 수 있음
+
+
+
+JSESSIONID=세션기술에서 웹브라우저로 세션ID를 보낼때 쿠키형태로 만들어서 전송- 이아이디가 세션정보를 저장한 쿠키의 이름
+
+
+
+**메소드**
+
+setComment(String), getComment()-쿠키에 대한 설명 설정 및 가져오기
+
+setDomain(String), getDomain()-쿠키의 유효한 도메인설정 및 가져오기
+
+setMaxAge(int), getMaxAge()- 쿠키의 유효한 기간 설정 및 기간을 알려줌-초단위로 설정  -만약 setMaxAge()를 0으로 설정할시 그 즉시 쿠키가 만료됨
+
+setPath(String), getPath()-쿠키의 유효한 디렉토리 정보를 설정하거나 알려줌
+
+setSecure(boolean), getSecure()-쿠키의 보안을 설정하거나 알려줌
+
+setValue(String), getValue()-쿠키의 값을 설정하거나 알려줌
+
+serVersion(int), getVersion()-쿠키의 버전을 설정하거나 알려줌
+
+getName()-쿠키의 이름을 알려줌
+
+
+
+### 세션
+
+**세션**:여러사람이 사용하는 컴퓨터일경우 쿠키를 뒤지면 다른사람의 정보를 쉽게 알아내는것을 방지하고 여러가지 단점을 극복하기 위해 나온 상태 유지 방법중 하나
+
+내장객체:session
+
+서블릿에서는 HttpSession session=request.getSession(); 으로 세션을 얻어올수 있음
+
+
+
+**메소드**
+
+Object getAttribute(String name)-이름에 해당되는 객체값을 가져옴 -Object라서 cast 필요
+
+Enumeration getAttributeNames()-세션에서 모든객체의 이름을 Enumeration 형으로 가져옴
+
+- hasMoreElements()-Enumeration 객체의 메소드이며 다음에 뽑아올 데이터가 있는지 검사
+
+- E nextElement()-다음 아이템이 존재한다는 전제하에 아이템을 하나씩 뽑아오는 역할
+
+
+
+
+
+long getCreationTime() - 세션이 만들어진 시간 반환
+
+String getId() - 해당세션을 가르키는 고유 id 값을 String 형으로 변환
+
+long getLastAccessedTime() - 해당 세션이 클라이언트가 마지막으로 request를 보낸시간을 long 형으로 반환
+
+int getMaxInactiveInterval() - 사용자가 다음 요청을 보낼 때 까지 세션을 유지하는 최대 시간(초단위) 반환-세션의 유효시간임 
+
+setMaxInactiveInterval() - 유효시간설정-무한대로 설정을 원하면 -1을 설정
+
+boolean isNew() - 해당 세션이 처음생성되었으면 true 값반환 이전이면 false
+
+void remobeAttribute(String name) - 지정된 이름에 해당하는 객체를 세션에서 제거
+
+setAttribute(String name, String value) - 세션에 지정된 이름에 객체추가
+
+invalidate () -해당 세션제거
+
+
+
+#### 자바 빈
+
+**자바 빈**
+
+- 정보의 덩어리로 데이터 저장소
+
+- 회원가입시 이름,아이디,별명,비밀번호등을 개별로 보내지않고 한꺼번에 묶어서 보냄
+
+- 물론 그냥 보내는것은 아니고 데이터 은닉도 같이함
+
+- 데이터를 저장하기 위한 필드와 데이터를 컨트롤하는 getter/setter 메소드를 하나의 쌍으로 가지고 있는 클래스
+- 자바빈 클래스는 다른 클래스와 차별화된 이름을 갖기도함 뒤에 Bean 이라던가 그리고 패키지도 따로씀
+
+- 일반적으로 필드에 getter/setter만 있는 클래스들(DTO) 라고 생각하면 편할듯
+
+
+
+**액션태그**
+
+**< jsp:useBean>** -jsp와 자바빈을 연결 하기 위한 태그
+
+**사용법**
+
+< jsp:useBean class="클래스 풀네임-패키지포함"
+
+​	                             id="빈이름"                   --빈이름이라는 변수에 할당
+
+​	                             [scope="범위"]/>   
+
+-범위는 생략가능 page, request, session,application 중하나 -생략시 해당페이지에서만 사용가능 다음페이지로 이동시 사용불가
+
+-범위 추가시 만약 page 면 <% pageContext.setAttribute("빈이름",빈이름); 으로 추가됨
+
+**역할**
+
+ex)  MemberBean은 클래스 이름이다
+
+< %@page import ="패키지.MemberBean">
+
+<% MemberBean member=new MemberBean(); %>
+
+혹은
+
+<% 패키지.MemberBean member=new 패키지.MemberBean(); %> -page 지시자를 추가하지않고 서술 
+
+**과 동일한 역할**
+
+
+
+**< jsp:getProperty>**-빈에서 정보를 얻어오는 태그
+
+< jsp:getProperty name="빈이름" property="필드" />
+
+이것은 
+
+<%= 빈이름.get필드()%> 와 같다 -그리고 이것은 이 상태로 쓴다.. 저장하는게 아니라 이것을 호출하는 순간 바로 그 자리에 표현이 되는셈
+
+
+
+**< jsp:setProperty>**
+
+< jsp:setProperty name="빈이름" property="필드" value="값">
+
+
+
+위 세가지의 액션태그를 쓸때 빈이름은 반드시 매칭시켜야함-틀리면 오류 
+
+보내는 쪽에서 Form을 작성한후 bean으로 가공하지 않았다고 해도 받는쪽에서 그것을 빈으로 인식하고 맞는 클래스를 맵핑해주기만 하면
+
+getProperty로 쓸수잇다.
+
+ex) web-study-06 03_addMember.jsp, 03_addMemberForm.jsp, kr.ac.jejunu.bj.javabeans.MemberBean.java
+
+
+
+# EL(표현언어) 와 JSTL
+
+JSP에서 표현식은 <%= %>로 썻지만 
+
+표현언어는 ${ }으로 쓴다-더간단함
+
+ex
+
+${"HELLO"}
+
+<%="HELLO"%>
+
+<% out.println("HELLO"); %>
+
+이 셋중 가장 간단하게 표현가능
+
+
+
+표현언어는 정수형,실수형,문자열형,논리형, NULL 값을 집어넣을수 있음
+
+또한 표현언어는 연산자를 넣을수 잇음
+
+산술형:+ - * /(div) %(mod)
+
+관계형:==(eq) !=(ne) <(lt) >(gt) <=(le) >=(ge)
+
+조건: a ? b : c
+
+논리: $$ (and) \\(or) !(not)
+
+null검사: empty ex) ${empty 객체}
 
 
 

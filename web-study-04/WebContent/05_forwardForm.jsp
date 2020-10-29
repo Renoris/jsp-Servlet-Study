@@ -7,8 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h3>프론트 페이지</h3>
-<a href="08_sub.jsp"> 서브페이지로 이동하기</a>
-<%@ include file="footer.jsp" %>
+입장하려면 나이를 입력하세요. <br>
+<form action="05_forwardTest.jsp">
+	<input type="text" name="age">
+	<input type="submit" value="입장">
+</form>
 </body>
-</html>	
+</html>
