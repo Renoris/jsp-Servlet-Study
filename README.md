@@ -867,3 +867,851 @@ null검사: empty ex) ${empty 객체}
 
 
 
+또한 <%= request.getParameter("id")%>는
+
+${param.id}
+
+혹은
+
+${param["id"]}
+
+라는 것으로 간단하게 바꿀수잇음. (param은 el의 내장객체)
+
+
+
+${param.id=="byungjun"} 만치면 
+
+<%=request.getParameter("id").equals("byungjun")%> 과 똑같은 기능을함
+
+
+
+또한 el식에서는 파라미터를 찾지못하면 공백으로 처리하기때문에
+
+기존식에서는 equals를 처리하면 null을 발생시켜 에러가 나타나지만 파라미터를 찾지못하면 공백으로 처리하기 때문에 예외가 발생하지않아 예외처리를 안해도됨
+
+
+
+### 표현식과 el식에서의 차이점
+
+<%=add%> 의 add->변수이름
+
+${add} 의 add =>속성이름
+
+ex) web-study-07- unit07-AdditionServlet.java , 07_addition.jsp'
+
+
+
+**jsp 내장객체와 표현언어의 내장객체의 표기**
+
+jsp 내장객체=표현언어의 내장객체
+
+pageContext=pagescope
+
+pageContext.getAttribute("num1") <=>${pageScope.num1}
+
+ 
+
+request=requestScope
+
+request.getAttribute("num1")<=>${requestScope.num1}
+
+
+
+session=sessionScope
+
+session.getAttribute("num1")<=> ${sessionScope.num1}
+
+
+
+application=applicationScope
+
+application.getAttribute("num1")<=> ${applicationScope.num1}
+
+
+
+여기서 ${num1} 이라고 표기시 page부터 applicaiton 순으로 차례대로 num1이라는 속성을 가져와 출력
+
+번외} 잘 사용할 일은 없겟지만 setParameter가 필요할때는 #{param.id처럼한다}
+
+
+
+### JSTL
+
+jsp는 스크립트릿과 자바코드등 여러가지 섞여서 복잡하게 되어있는데  ex) if-else 문에서 if문내부의 html 코드
+
+쉽게 코딩을 하기위해 자신이 태그를 추가함-커스텀태그
+
+작성한 커스텀 태그를 모아서 압축한후 이를 배포해서 사용-커스텀 태그 라이브러리
+
+커스텀태그들을 개별적으로 만들어 쓰다보니 일관성이 없어서 이를 표준화한것 -JSTL
+
+
+
+자바 웹 애플리케이션에서는 추가적인 라이브러리가 jar 파일형태로 제공-WEB_INF/lib 폴더 내에 복사해두고 사용
+
+JSTL의 라이브러리는 http://jakarta.apache.org 사이트에서 다운받을수 있음
+
+http://archive.apache.org/dist/jakarta/taglibs/standard/binaries/
+
+jstl.jar              -JSTL API 클래스
+
+standard.jar   -Standard Taglib JSTL 구현 클래스
+
+JSTL을 사용하기 위해서는 위 2가지의 라이브러리가 필요
+
+
+
+또한 jsp 상단에
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> jstl 기본기능인 core를 사용하기위한 taglib 지시자를 붙여줘야함
+
+
+
+기본기능
+
+prefix-기능-기본url
+
+c-core-http://java.sun.com/jsp/jstl/core
+
+fn-함수처리--http://java.sun.com/jsp/jstl/fn
+
+fmt-형식화--http://java.sun.com/jstl/fmt
+
+sql-데이터베이스작업--http://java.sun.com/jstl/sql
+
+x-xml처리--http://java.sun.com/jstl/xml
+
+
+
+원하는 기능을 taglib uri=와 prefix를 지정해주면
+
+<c:out value="Hello world"/>처럼 사용이 가능함 c:out은 표현식인 <%= >를 대체할수있음
+
+
+
+### JSTL core tag
+
+< c:set> 변수에 값설정
+
+< c:remove> 변수에 설정된 값 제거
+
+< c:if> 조건처리 사용
+
+< c:choose> 여러 조건에 따라 처리를 달리 할때 사용-switch인가?
+
+< c:forEach> 반복처리를 할때 사용
+
+< c:forTokens>- 구분자로 분리된 각각의 토큰을 처리할때 사용
+
+< c:import> -외부의 자원을 url을 지정하여 가져다 사용함
+
+< c:redirect> 지정한 경로로 이동
+
+< c:url> url을 재작성
+
+< c:out> 데이터를 출력할때 사용
+
+< c:catch> 예외처리시 사용
+
+
+
+**c:set**
+
+pageContext.setAttribute("msg", "Hello"); 를
+
+< c:set var="msg" value="Hello" scope="page" /> 
+
+치환가능 var는 변수이름 value는 값 scope는 범위
+
+또한 < c:set var="msg" scope="session">hello < /c:set>으로 값을 저장할 수도있음
+
+또한 scope는 생략가능-자동 page scope
+
+
+
+배열을 만들고자할때는
+
+<c:set var="movieList" scope="page">타이타닉, 시네마천국, 혹성탈출, 킹콩< /c:set>
+
+ 해주면 간단 scope 생략가능
+
+
+
+또한 java bean에서 
+
+< jsp:setProperty>를 대신하여 쓸수 있음 -web-study-06
+
+< jsp:setProperty name="member" property="name" value="김병준" />을
+
+<c:set target="${member}" property="name" value="김병준" /> 으로 활용 할 수있다
+
+또한 setProperty 를하기위해선 useBean을 먼저 선언해야 하듯이
+
+
+
+< jsp:useBean id="member" class="kr.ac.jejunu.bj.javaBeans.MemberBean()"/>
+
+을
+
+< c:set var="member" value="<%=new kr.ac.jejunu.bj.javaBeans.MemberBean()%>">
+
+로 할수있음-궁금한점
+
+< c:set var="member" value=<c:out="new kr.ac.jejunu.bj.javaBeans.MemberBean()">> 하면 안되나?
+
+안됨 하지마셈 el식도 마찬가지.. 표현식으로만 쓰자
+
+
+
+ex)web-study-07 11_jstlCore.jsp
+
+
+
+**c:remove**
+
+<c:remove var="msg" scope="page"> scope는 생략가능
+
+
+
+**c:if**
+
+if는 조건식이지만 if-else 구문이아닌 if 밖에 없다 그러므로 여러개의 if 를 써서 그 조건조건마다 명령을 지정해야함
+
+
+
+ex)web-study-07 12_colorSelect.jsp
+
+
+
+**c:choose**
+
+자바의 if-else와 비슷함 내부 태그로 c:when 과 c:otherwise가 있음 각각 if와 else로 생각하면 될듯
+
+ex)web-study-07 13_fruitSelect.jsp
+
+
+
+**c:forEach**
+
+<c:set var="movieList" scope="page">타이타닉, 시네마천국, 혹성탈출, 킹콩</c:set>
+<c:forEach var="movie" items="${movieList}">
+${movie}<br>
+</c:forEach>
+
+처럼 하면된다 또한 forEach에서 사용하는 프로퍼티는 **index, Count, first,last** 가 있다 
+
+**index**는 item중 지정한 집합체의 현재 반복중인 항목의 index를 알려주고
+
+**count**는 현재가 몇번째 루프인지 알려준다
+
+**first**는 현재 루프가 처음인지알려주고
+
+**last**는 현재 루프가 마지막인지 여부를 알려줌 boolean 리턴
+
+
+
+이 것들은 varStatus라는 속성으로 알수있다
+
+varStatus.index
+
+varStatus.count
+
+<c:forEach var="movie" items="${movieList}" varStatus="status">
+
+${staus.index}
+
+${status.count} < br>
+
+< /c:forEach>
+
+
+
+또한 begin과 end를 통해 forEach 문을 조절할수도 있다-for문처럼
+
+<c:forEach var="cnt" begin="1" end="10" step="1">
+
+${cnt}
+
+< /c:forEach>
+
+cnt는 변수이고 step만큼 올라감 
+
+step의 기본은 1이고 생략가능함
+
+
+
+**c:forTokens**
+
+문자열을 구분자로 분리해서 하나씩 추출가능
+
+< c:forTokens var="토큰을저장할변수" items="토큰으로 나눌 문자열" delims="구분자">
+
+몸체
+
+< /c:forTokens>
+
+
+
+ex) <c:forTokens var="city" items="서울,인천.대구,부산" delims=",.">
+
+${city} < br>
+
+< /c:forTokens>
+
+=>서울
+
+인천
+
+대구
+
+부산
+
+delims 가 문자에서 사라지고 나눠짐 여러개를 적어도 각기 개별로 하나로 인식함
+
+
+
+**c:import**
+
+다른페이지 내용포함
+
+< c:import url="URL" [var="변수이름"] [scope="영역"] [charEncoding="charEncoding"]>
+
+< /c:import>
+
+이전의 jsp 액션태그와 다른점은 다른페이지의 내용을 변수에 저장가능
+
+ex)
+
+<c:import url="http://localhost:8181/web-study-07/03_el.jsp" var="data"></c:import>
+
+${data}
+
+
+
+**c:url**
+
+여러번 반복하여 사용할 주소가 있다면 변수에 저장하기 위해서 사용
+
+< c:url value="url" [var="변수이름"] [scope="영역"]></c:url>
+
+
+
+**c:redirect**
+
+response.sendRedirect()메소드와 동일한긴으
+
+<c:redirect url="url" [context="경로명"]/>
+
+ex) <c:redirect url="20_jstlURl.jsp"> < /c:redirect>
+
+
+
+**c:out**
+
+출력을 위한태그
+
+<c:out value="value" [dafault="기본값"]>
+
+
+
+**c:catch**
+
+<c:catch var="변수이름">
+
+예외가발생할수있는 코드
+
+</c:catch>
+
+예외가 발생하면 그 catch 내부의 코드는 종료되고 에러코드의 로그가 변수이름에 담기게된다
+
+
+
+
+
+#### JSTL fmt
+
+국제화 지역화 태그-jsp 페이지에서 다양한 언어를 지원받을수 있도록 할 수 있음
+
+
+
+태그종류
+
+**formatNumber**- 숫자를 양식에 맞춰서 출력
+
+**formatDate**-날짜 정보를 담고있는 객체를 포맷팅하여 출력할 때 사용
+
+**parseDate**-문자열을 날짜로 파싱
+
+**parseNum**-문자열을 수치로 파싱
+
+**setTimeZone**-시간대별로 시간을 처리할수 있는 기능제공
+
+**timeZone**-마찬가지로
+
+
+
+**setLocale**-국제화 태그들이 사용할 로케일지정
+
+**requestEncoding**-요청 피라미터의 인코딩지정
+
+
+
+**bundle**-태그몸체에 사용할 리소스 번들을 지정
+
+**message{param}**-메세지 출력
+
+**setbundle**-특정 리소스 번들을 사용할수있도록 설정
+
+
+
+[]는 생략가능하다는뜻
+
+**formatNumber**
+
+<fmt:formatNumber value="수치데이터" [type="number|currency|percent"] -숫자통화퍼센트
+
+[pattern="패턴"]-사용자가 지정한 형식패턴
+
+[currencySymol="화폐단위"] 위에 타입이 통화일때만 가능
+
+[groupingUsed="true|false"] -콤마와 같이 단위를 구분할때 사용하는 기호를 표시할지 여부
+
+[var="변수이름"]-출력값을 담는 변수이름
+
+[scope="알잖아"]
+
+
+
+**formatDate**
+
+<fmt:formatDate value="date" [type="time|date|both"]
+
+[dateStyle="defalut|short|medium|long|full"]
+
+[timeStyle="defalut|short|medium|long|full"]
+
+[pattern="customPattern"]
+
+[timezone="timezone"]
+
+[var="varName"]
+
+[scope="알지?"]
+
+
+
+
+
+
+
+## JDBC   -8장
+
+### oracle 기본
+
+기본적으로 express Edition 18c 로 진행 18.4.0.0.0
+
+기본 사용자 계정
+
+**sys** -oracle super 사용자 계정 모든 문제 들을 처리할수 있는 권한 가짐
+
+**system**-오라클 데이터베이스를 유지보수 관리할때 사용할수있는 계정-데이터베이스 생성권한 없음
+
+**HR**-처음 오라클을 사용하는 사용자의 실습을 위해 만들어 놓은 교육용 계정
+
+
+
+오라클 12c 부터는
+
+공통사용자를 만들때는 공통사용자 이름앞에 c##을 붙여야함
+
+create user c##renoris identified by 비밀번호; -이렇게
+
+물론 권한 부여시에도 c##은 붙여야함
+
+시스템 권한으로 유저를 만든뒤 해야할것들
+
+grant connect, resource to scott; - connect 데이터 베이스 접속을위한 권한, resource- 테이블 생성이 가능하도록하는 권한
+
+grant create view to scott;
+
+alter user c##scott default tablespace users quota unlimited on users; -이거 안하면 insert 못넣는듯
+
+
+
+create table member(
+
+name varchar2(10),
+
+userid varchar2(10),
+
+pwd varchar2(10),
+
+email varchar2(20),
+
+phone char(13),
+
+admin number(1) default 0,
+
+primary key(userid)
+
+);
+
+이며 varchar2는 가변형 글자로 글자의 크기 변동이 클때 사용함
+
+
+
+또한 지금 현재 접속한 계정에서 다른 계정으로 접속하려면 conn 명령어사용 -conn 계정/비밀번호 
+
+ex) c##scott/tiger
+
+
+
+또한 오라클에서는 insert 명령문으로 데이터를 넣고 commit; 을 하지않으면 저장안됨
+
+
+
+### jdbc
+
+jdbc 를 사용하려면 java.sql.* 를 import 해야 사용가능
+
+인터페이스 종류
+
+-Connection-데이터베이스 연결과 관련된 인터페이스-DriverManager.getConnection()으로 얻음
+
+-Statement- 질의 갱신 실행 -connection.createStatement()로 얻음
+
+-ResultSet-결과물 -statement.executeQuery()로 얻음
+
+
+
+jdbc 를 사용하려면 jdbc 드라이버를 java 환경에 설치해야함 -데이터베이스 업체에서 제공-오라클이 설치된 디렉토리 찾아가면됨
+
+dbhomeXE/jdbc/lib
+
+
+
+또한 라이브러리가 설치되었으면 jdbc를 쓰기위해서 드라이버를 로딩해야하는데 처음 객체들을 만들어 주기전
+
+Class.forName("oracle.jdbc.driver.OracleDriver") -쳐주면 드라이버가 로딩이 됨
+
+이유는 Class 클래스의 정적메소드인 forName()은 패키지명을 기술한후 클래스이름을 문자열 형태로 지정해주면 이를 자바 가상기계에 안으로 읽어옴
+
+ 
+
+#### Connection
+
+Connection 객체는 DriverManager.getConnection(url,uid,pwd); 순으로 얻을수있음
+
+url은 jdbc:oracle:thin:hostname:port:dbname 순으로함
+
+ex) "jdbc:oracle:thin:@localhost:1521:XE"
+
+포트번호는 dbhomeXE/network/admin/lisner.ora 를 열어보면 포트번호가 있음
+
+XE는 오라클 익스프레션 버전을 다운받앗다면 XE임-이것또한 열어보면 XE인지 다른버전인지 나옴
+
+ex-DEFAULT_SERVICE_LISTENER =XE 
+
+또한 데이터 베이스 사용이 끝낫다면 conn.close 해줘야함-(conn은 Connection의 객체)
+
+ex) Connection conn=DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE","scott","tiger");
+
+
+
+#### Statement
+
+conn.createStatement(); 로 얻을수있음(conn은 Connection의 객체)
+
+또한 마찬가지로 사용이 끝나면 stat.close(); 해줘야함
+
+
+
+**statement의 메소드**
+
+executeQuery-select 문과 같이 결과값이 여러개의 레코드로 구해지는 경우에 사용
+
+executeUpdate-insert,update,delete문과 같은 내부적으로 테이블의 내용이 변경만 되고 결과 값이 없는 경우에 사용
+
+
+
+ex) String sql=" select * from member";
+
+ResultSet rs= stmt.executeQuery(sql);
+
+
+
+##### ResultSet
+
+ResultSet 객체는 select 문의 결과값을 저장하고있음-여러개의 로우로 구성되어 있음
+
+
+
+ResultSet이 제공하는 메소드
+
+-next()-한행 앞으로이동
+
+-previouse()-한행뒤로이동
+
+-first()-첫번째 행의 위치로 이동
+
+-last()-마지막으로 이동
+
+-성공적으로 진행될시 true 리턴,실패시 false 리턴
+
+
+
+또한 ResultSet의 객체에서 값을 얻기 위해서는 다양한 get을 써야함 -getInt("컬럼이름") getString("컬럼이름")등
+
+혹은 인덱스 값을 알고있다고 한다면은 인덱스 값을 입력해도됨
+
+ex) 이름 유저아이디 패스워드 이메일 폰 관리자여부 라면
+
+이름이 1 유저아이디가 2 가되는셈
+
+getString(1) 이렇게
+
+
+
+##### PreparedStatement
+
+데이터베이스에 저장하기 위해서는 PreparedStatement 인터페이스를 이용함-Statement의 단점을 극복한 서브인터페이스
+
+
+
+preparedStatement()의 메소드 인자로 sql문을 삽입하지만 Statement의 정해진 sql이 아닌 바인드 변수를 이용한 sql문을 삽입함
+
+ex-String sql="insert into member values(?, ?, ?, ?, ?, ?)";
+
+PreparedStatement pstmt = con.preparedStatement(sql);
+
+?는 바인드 변수라고하며 매번 값이 바뀔수 있으므로 미리 정해놓지 않은것
+
+
+
+그리고 이 바인드 변수에 setString이나 setInt 같은것들을 통해 값을 삽입
+
+그리고 값 삽입이 끝나면
+
+pstmt.executeUpdate();
+
+pstmt.close();
+
+를 통해 업데이트하고 종료해줌
+
+
+
+### 데이터베이스 커넥션 풀-DBCP-9장
+
+##### DBCP란?
+
+dbcp는 접속인원이 많은 웹페이지에서 데이터베이스의 효율성과 속도를 높이기 위해서 사용
+
+많은 클라이언트가 항상 데이터베이스에 접근권한을 얻고 사용하고 종료하는 현상을 반복하면 서버에 부하가 발생하기 때문에
+
+일정갯수의 DBCP매니저를 준비해주고 항상 데이터베이스와 연결상태로 있다가 클라이언트가 연결해주고 클라이언트의 요청이 끝나면
+
+다시 DBCP가 반납받는 형태의 구성
+
+
+
+**DBCP 설치**
+
+dbcp의 커넥션풀은 컨텍스트 패스의 서브태그로 추가함
+
+-server.xml에서 해당하는 프로젝트의 컨텍스트를 찾고 < Context />를 < Context> < /Context>로 바꿔주고  
+
+-아파치 홈페이지에가서 자신이 사용하는 톰캣 서버에 맞는 jdbc dataSoureces에서 오라클 부분의 코드를 가져와 안에 붙여넣기
+
+-그리고 URL 마지막에 오라클 서버의 이름을 맞게 바꿔주기 -실습의경우는 익스프레션에디션이기때문에 XE -그리고 유저네임이랑 패스워드까지 맞춰주자
+
+ex) <Resource name="jdbc/myoracle" auth="Container"
+	              type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+	              url="jdbc:oracle:thin:@127.0.0.1:1521:XE"
+	              username="c##scott" password="tiger" maxActive="20" maxIdle="10"
+	              maxWait="-1"/>
+
+
+
+**JDBC 구현**
+
+**jsp 코드**
+
+<%
+	Context initContext =new InitialContext();
+	Context envContext= (Context)initContext.lookup("java:/comp/env");
+	DataSource ds=(DataSource)envContext.lookup("jdbc/myoracle");
+	Connection conn=ds.getConnection();
+	out.print("jdbc 연동성공");
+%>
+
+시작 컨텍스트를 새롭게 만든뒤
+
+중간 컨텍스트를 시작컨텍스트로 룩업한뒤 캐스팅해서 만들고
+
+마지막 데이터소스를 중간컨텍스트에서 룩업해서 캐스팅해서 만듬. 이때 데이터소스를 룩업할때 들어가는 저것은 
+
+server.xml의 Resource 태그의 name 속성이랑 똑같이 맞춰준다
+
+또한 DataSourece 를 쓰는 이유는 server.xml에 type속성이 javax.sql.DataSourece이기 때문에 마찬가지로 똑같이 만들어준다
+
+
+
+### **DAO 와 VO**
+
+**DAO**-데이터베이스에 저장된 데이터를 조회하는것을 담당하는 클래스 
+
+**VO**-테이블의 정보를 자바에서 얻어오기전에 회원정보를 저장할 공간을 위한 준비과정-**자바 빈과 동의어**
+
+
+
+
+
+#### 싱글톤 패턴이란?
+
+인스턴스가 오로지 단하나만 존재할수 있도록 클래스를 설계하는것
+
+-객체를 단 하나만 메모리에 올려놓고 시스템 전반에 걸쳐 특정한 자원을 공유할 때사용
+
+
+
+DAO는 여러번 생성하면 성능이 떨어지기 때문에 단 하나의 객체로 하는것이 좋음
+
+
+
+**싱글톤 패턴의 조건**
+
+1. 생성자가 private 여야함-다른클래스에서 절대 인스턴스를 생성하지 못하고 자기 자신만 인스턴스를 생성 할 수 있음-자기자신을 static 하게 생성하게 생성하고-getInstance 라는 static한 메소드를 만들어서 그 인스턴스를 받아가게함
+2. 또한 외부에서 수정은 못하고 값만 얻을 수 있도록 setter 는 정의하지않고 getter만 만듬
+
+
+
+이렇게 만들어진 싱글톤 패턴의 DAO에서 **DBCP**를 생성하는 메소드 또한 추가를 시킨다.
+
+ex) web-study-09-com.jejunu.dto.MemberDAO.java
+
+
+
+**DAO에 들어갈 메소드들(일반적으로 이거보다 더많이 들어갈 수 있다)**
+
+int userCheck(String userid, String pwd)-이 유저가 있는지 없는지 확인하는 메소드-사용자인증용 메소드
+
+MemberVO getMember(String userid)-member테이블에서 아이디로 해당회원을 찾아 회원정보를 가져옴
+
+int confirmID(String userid)-회원가입시 아이디 중복을 확인할때 사용-해당 아이디가 있으면 1 없으면 -1을 리턴
+
+void insertMember(MemberVO mVo)-매개변수로 받은 VO 객체를 member 테이블에 삽입 - 회원가입 전용인듯
+
+void updateMember(MemberVO mVo)-매개변수로 받은 VO객체를 검색한뒤 회원정보를 수정
+
+
+
+**짤막한tip**
+
+jsp 끼리 페이지를 요청할때 jsp파일이름이나 서블릿 클래스이름으로 요청을 하지않고 xxx.do 같은 형식으로 작성함
+
+또한 컨텍스트 페스까지만 입력하면 자동으로 index.jsp를 호출하게 되므로 index.jsp 파일을 만들어서 우리가 만든 대문으로 가는 형식을 삽입하기바람
+
+
+
+이 내용의 모든것은 web-study-09 에 다있음
+
+
+
+**DAO의 방법들**
+
+기본적으로 
+
+Connection
+
+PrepareStatement
+
+ResultSet
+
+이 셋으로 모든걸 할 수있음
+
+먼저 DBCP를 통해 커넥션을 얻어오는걸 메소드로 만든 뒤에
+
+public Connection getConnection() throws Exception{
+		Connection conn=null;
+		Context initContext = new InitialContext();
+		Context envContext = (Context)initContext.lookup("java:/comp/env");
+		DataSource ds =(DataSource) envContext.lookup("jdbc/myoracle");
+		conn= ds.getConnection();
+		return conn;
+	}
+
+커넥션을 얻어오고 		conn=getConnection();
+
+미리 만들어놧던 sql문으로 preparestatement를 만들고-pstmt= conn.prepareStatement(sql);
+
+sql문의 ? 에 삽입하고 -pstmt.setString(1, userid);
+
+쿼리실행한뒤 결과를 받아옴 rs= pstmt.executeQuery();
+
+검색문의 경우 ResultSet을 통해 받아와서 차래로 필드에 맞는 값을꺼내오고
+
+수정문이나 삽입문의 경우 정수형태를 받아와서 정수형태의 따른 결과값만을 안내하는 경우가 있음
+
+그리고 마지막으로 메소드가 끝났을때 모든게 다 null로 선언만하고 try문 안에서 할당을 했을태니
+
+finally로 선언의 역순으로 close 해준다
+
+
+
+## COS 라이브러리
+
+파일을 업로드할때 가장 많이 쓰이는 라이브러리라 함.... 현재도 그럴지는
+
+http://www.servlets.com/cos/
+
+
+
+또한 html에서 파일을 전송하기 위해선 form 태그의 enctype 속성을 multipart/form-data 로 수정해주어야하고 post형식이어야함
+
+
+
+cos.jar에는 다양한 클래스가 있지만 대표적으로 사용되는게 MultipartRequest임
+
+이 생성자가 요구하는 매개변수는 (javax.servlet.http.HTTpServletRequest request, java.lang.String saveDirectory, int MaxPostSize, java.langString encoding, FileRenamePolicy policy )
+
+request는 리퀘스트 객체를 그대로 주면되고
+
+saveDirectory는 서버측에 저장될경로
+
+-String savePath="upload"-여기를 바꿔주면 다운받는경로가 바뀐다
+
+-ServletContext context=getServletContext()
+
+-String uploadFilePath=context.getRealPath(savePath);  를 통해 업로드 패스를 얻어낸다
+
+MaxPostSize는 최대 파일크기 -1이면 1바이트 5 *1024 *1024 면 5메가바이트
+
+encoding은 파일의 인코딩 방식-파일이름이 한글일경우 utf-8
+
+policy는 파일 중복처리를 위한 매개변수인데 일반적으로 우리는 중복처리가 가능하게 cos.jar내부에 multipart 폴더내부에있는 DefaultFileRenamePolicy를 쓴다 즉 new DefaultFileRenamePolicy()를 던져주면됨
+
+
+
+**MultipartRequest 클래스의 유용한 메소드들**
+
+getParameterNames() 폼에서 전송된 파라미터 이름을 Enumeration 타입으로 리턴
+
+getParameterValues()-폼에서 전송된 파라미터들을 배열로 받아옴
+
+getParameter()-객체에 있는 해당 파라미터의 값을 가져옴
+
+getFileNames()-파일을 여러개 업로드 할 경우 그값들을 Enumeration 타입으로 리턴
+
+getFilesystemName()-서버에 실제로 업로드 된 파일의 이름을 의미
+
+getOriginalFileName()-클라이언트가 업로드한 파일의 원본이름을 의미
+
+getContentType()-업로드 파일의 컨텐트 타입을 얻을때 사용
+
+getFile()-서버에 업로드된 파일의 정보를 객체로 얻어낼 때 사용
+
+
+
+**파일 업로드 위치**
+
+워크스페이스\ .metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\프로젝트\upload위치에서 확인가능
