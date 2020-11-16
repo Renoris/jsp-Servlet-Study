@@ -38,7 +38,7 @@ function idok(){
 
 
 function joinCheck(){
-	if(document.frm.nane.value.length==0){
+	if(document.frm.name.value.length==0){
 		alert("이름을 써주세요.");
 		frm.name.focus;
 		return false;

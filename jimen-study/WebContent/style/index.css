@@ -1,0 +1,12 @@
+@charset "EUC-KR";
+
+
+.box{
+	float:left;
+	width:100px;
+	height:100px;
+	cursor: pointer;
+	border-style:solid;
+	border-width:1px;
+	text-align: center;
+}
